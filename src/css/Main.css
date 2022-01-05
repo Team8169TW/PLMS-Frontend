@@ -1,0 +1,84 @@
+.info-container {
+  width: 100%;
+  margin-top: 2rem;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 2rem;
+  box-shadow: 0.5rem 0.5rem 2rem 0.25rem rgba(0, 0, 0, 0.5);
+}
+
+.info-container .highlight {
+  /* border-bottom: 0.3rem solid #5CB3CC; */
+  background-color: rgba(92, 179, 204, 0.3);
+  padding: 0 0.5rem;
+
+  /* color: #FFFFFF; */
+
+  /* font-weight: bold; */
+}
+
+.info-container .question-part {
+  background: #f8f9fa;
+  padding: 1rem 0;
+  border: 0.1rem solid #d9dadb;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-container .question-part#answer {
+  padding: 1rem;
+}
+
+.info-container label,
+.info-container .form-group {
+  margin-bottom: 0.7rem;
+}
+
+.info-container .btn[type="submit"] {
+  width: 100%;
+  margin: 0.7rem 0;
+}
+
+.info-container hr {
+  border: 0.2rem dashed #fff;
+  background: #5cb3cc;
+}
+
+.info-container h2 {
+  border-bottom: 0.6rem solid #5cb3cc;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+}
+
+.info-container hr#col-sm-hr {
+  display: none;
+}
+
+.react-bootstrap-table table {
+  table-layout: auto !important;
+}
+
+.react-bootstrap-table td {
+  vertical-align: middle;
+}
+
+.react-bootstrap-table .has-button td {
+  padding: 0.25rem 0.75rem;
+}
+
+.react-bootstrap-table-footer {
+  line-height: 36px;
+  text-align: center;
+}
+
+.react-bootstrap-table-footer .col-md-4 {
+  margin-top: 8px;
+}
+
+.react-bootstrap-table-page-btns-ul {
+  display: inline-flex;
+}
+
+.search-label {
+  display: block;
+}

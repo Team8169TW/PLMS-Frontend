@@ -1,0 +1,28 @@
+.footer-container {
+  width: 100%;
+  margin-top: 2rem;
+  color: #000;
+}
+
+.footer-container .footer-container-card {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 2rem 2rem 0 0;
+  box-shadow: 0.5rem 0.5rem 2rem 0.25rem rgba(0, 0, 0, 0.5);
+  margin-top: 2rem;
+}
+
+.footer-container .footer-container-card .col-sm {
+  margin-bottom: 0.5rem;
+}
+
+.footer-container .row {
+  /* padding-left: calc(var(--bs-gutter-x)/ 2);
+    padding-right: calc(var(--bs-gutter-x)/ 2); */
+}
+
+.footer-container .footer-container-card h1 {
+  border-bottom: 0.6rem solid #5cb3cc;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+}

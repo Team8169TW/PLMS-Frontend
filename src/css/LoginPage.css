@@ -1,0 +1,23 @@
+.Login {
+  text-align: center;
+  padding-top: 10px;
+}
+
+.Login p {
+  margin: 1rem 0 0;
+}
+
+.login-container {
+  width: 380px !important;
+  margin-top: 2rem;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 2rem;
+  box-shadow: 0.5rem 0.5rem 2rem 0.25rem rgba(0, 0, 0, 0.5);
+}
+
+.login-container h2 {
+  border-bottom: 0.6rem solid #5cb3cc;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+}

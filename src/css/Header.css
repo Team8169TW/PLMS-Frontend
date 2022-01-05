@@ -1,0 +1,98 @@
+.header-container {
+  height: 64px;
+}
+
+.title-container {
+  width: 100%;
+  margin-top: 2rem;
+  padding: 2rem;
+}
+
+.title-container .title-container-title {
+  padding: 0.8rem 2.2rem;
+  background: rgba(92, 179, 204, 0.9);
+  border-radius: 3rem;
+  color: #fff;
+  box-shadow: 0.5rem 0.5rem 2rem 0.25rem rgba(0, 0, 0, 0.5);
+}
+
+.nav-container {
+  width: 100%;
+  min-height: 4rem;
+  background: #fff;
+  border-radius: 0 0 2rem 2rem;
+  box-shadow: 0.5rem 0.5rem 2rem 0.25rem rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 20;
+}
+
+.nav-container #logo {
+  border-right: 0.1rem solid #000;
+  padding-right: 1rem;
+}
+
+.nav-container .navbar-light {
+  background: #fff;
+  padding: 0.5rem 0.5rem;
+}
+
+.nav-container .navbar-light .navbar-toggler {
+  border-color: rgba(0, 0, 0, 0);
+}
+
+.nav-container .nav-link:hover,
+.nav-container .nav-link.active {
+  border-bottom: 0.4rem solid #5cb3cc;
+  transition: all 0.1s;
+  margin-bottom: -0.4rem;
+  color: #5cb3cc;
+}
+
+.nav-container .nav-link .nav-link-span:hover,
+.nav-container .nav-link.active span {
+  color: #5cb3cc;
+  transition: all 0.1s;
+}
+
+button.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.25rem #5cb3cc;
+}
+
+/* .banner-container {
+    background: url(https://isd.server.imych.one/rnrs-new-20210208/timthumb.php?h=1080&w=1920&zc=1&src=./assets/img/david-tran-g-dZ1h7nQ0E-unsplash.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    position: fixed;
+    z-index: -1;
+    opacity: 0.5;
+} */
+
+.banner-container {
+  /* background: url(../img/2020_KSKG_XMAS3.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed; */
+  position: fixed;
+  z-index: -1;
+  opacity: 0.5;
+  width: 100%;
+  height: 100%;
+}
+
+/* .banner-container.custom {
+  background: url(../img/Fantastic2.jpeg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  position: fixed;
+  z-index: -1;
+  opacity: 0.5;
+  width: 100%;
+  height: 100%;
+} */

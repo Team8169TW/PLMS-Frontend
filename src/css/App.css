@@ -1,0 +1,66 @@
+/*
+Author: yc97463
+Main Color: #5CB3CC
+Deputy Color: #FCB612
+*/
+
+/* Global */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: #ededed;
+  font-family: Roboto, "Noto Sans TC", sans-serif !important;
+}
+
+#Main {
+  min-height: calc(100% - 216px);
+}
+
+::-moz-selection {
+  /* Code for Firefox */
+  background: rgba(92, 179, 204, 0.5);
+}
+
+::selection {
+  background: rgba(73, 143, 163, 0.5);
+}
+
+/* --- font --- */
+.font-weight-bold,
+h1,
+h2,
+.toc-container.list-group .list-group-item:hover,
+.info-container .highlight {
+  font-weight: 700 !important;
+}
+
+@media (max-width: 767.98px) {
+  .nav-container::after {
+    min-height: 100%;
+  }
+
+  .nav-container #logo {
+    display: none;
+  }
+
+  .nav-container .nav-link,
+  .nav-container .nav-link span {
+    margin-top: 0.5rem;
+  }
+
+  .info-container hr#col-sm-hr {
+    display: flex;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container,
+  .nav-container nav.navbar div.container {
+    width: 100%;
+    max-width: 1600px;
+  }
+}

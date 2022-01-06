@@ -13,3 +13,9 @@
 .table-sm {
   line-height: 1rem;
 }
+
+.padding {
+  text-align: center;
+  background-color: #e9ecef;
+  font-weight: bolder;
+}

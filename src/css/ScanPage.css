@@ -1,0 +1,11 @@
+.nav-tabs a {
+  color: #5cb3cc;
+}
+
+.tab-content {
+  padding: 0.5rem !important;
+}
+
+.card-title {
+  text-align: center;
+}

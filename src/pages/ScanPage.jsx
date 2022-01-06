@@ -6,17 +6,29 @@ import {
   Container,
   Form,
   InputGroup,
+  Tab,
+  Tabs,
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as ZXing from "@zxing/library";
 import Swal from "sweetalert2";
 import useConstructor from "../units/useConstructor";
 import API from "../API";
+import "../css/ScanPage.css";
 
 let codeReader;
 let lastResult;
 let timeout;
 let lastCheckinId;
+
+/*
+const scanModeList = [
+  { mode: "PARTS_IN", name: "零件入庫" },
+  { mode: "PARTS_OUT", name: "零件出庫" },
+  { mode: "PARTS_QUERY", name: "零件查詢" },
+  { mode: "STORE_QUERY", name: "倉儲查詢" },
+];
+*/
 
 /*
 Format:
@@ -47,11 +59,10 @@ export default function ScanPage() {
   const [devices, setDevices] = useState([]);
   const [isMirror, setIsMirror] = useState(false);
   const [deviceIndex, setDeviceIndex] = useState(0);
-  const [eventList, setEventList] = useState([{ id: 0, value: "Loading..." }]);
-  const [gateList, setGateList] = useState([]);
-  const [eventVal, setEventVal] = useState(0);
-  const [gateVal, setGateVal] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
+
+  const [scanMode, setScanMode] = useState("PARTS_QUERY");
+
   /* eslint-disable no-unused-vars */
   const [infoOrg, setInfoOrg] = useState("");
   const [infoRole, setInfoRole] = useState("");
@@ -92,20 +103,6 @@ export default function ScanPage() {
     };
   }, []);
 
-  useEffect(() => {
-    API.get("/event/organize").then((res) => {
-      if (res.status === 200) setEventList(res.data);
-    });
-  }, [true]);
-
-  function getGates(value) {
-    API.get(`/event/${value.split("-")[1]}`).then((res) => {
-      if (res.status === 200) {
-        setGateList(res.data.gates);
-      }
-    });
-  }
-
   function clearLast() {
     setInfoName("");
     setInfoTime("");
@@ -119,15 +116,12 @@ export default function ScanPage() {
     setInput("");
   }
 
-  async function onScanSuccess(text, manual = false) {
-    const eventId = eventVal.split("-")[0];
-    let hash = text;
-    if (manual === true) {
-      hash = `RNRSv3-${eventId}-${text}-phone`;
-    }
-    const payload = { hash, gateId: gateVal };
+  async function onDataSubmit(content) {
+    console.log(content);
 
-    await API.post(`/checkin/${eventId}`, payload)
+    const payload = { content };
+
+    await API.post(`/checkin/`, payload)
       .then((res) => {
         switch (res.status) {
           case 201: {
@@ -178,7 +172,7 @@ export default function ScanPage() {
           case 404: {
             Swal.fire({
               title: "格式不符或不存在",
-              html: `資料：${text}<br>現在時間：${new Date().toLocaleString()}`,
+              html: `資料：${content}<br>現在時間：${new Date().toLocaleString()}`,
               showConfirmButton: false,
               icon: "error",
               timer: 2000,
@@ -199,45 +193,9 @@ export default function ScanPage() {
       clearLast();
     } else {
       setIsMirror(devices[deviceIndex].mirror);
-      scan.start(devices[deviceIndex].deviceId, onScanSuccess);
+      scan.start(devices[deviceIndex].deviceId, onDataSubmit);
       setIsScanning(true);
     }
-  }
-
-  async function onSubmitNote(hasAlert = true) {
-    let content = noteVal;
-    if (noteVal2 !== "") {
-      content += ` - ${noteVal2}`;
-    }
-    const payload = { content };
-
-    await API.post(`/checkin/note/${lastCheckinId}`, payload)
-      .then((res) => {
-        switch (res.status) {
-          case 201: {
-            clearTimeout(timeout);
-            timeout = setTimeout(clearLast, 3000);
-            if (hasAlert) {
-              Swal.fire({
-                title: "備註成功",
-                showConfirmButton: false,
-                icon: "success",
-                timer: 1000,
-              });
-            }
-            setCanNote(false);
-            break;
-          }
-          case 404: {
-            break;
-          }
-          default:
-            break;
-        }
-        setNoteVal("");
-        setNoteVal2("");
-      })
-      .catch(() => {});
   }
 
   async function onReject() {
@@ -276,81 +234,22 @@ export default function ScanPage() {
     });
   }
 
-  function isNoteSubmitDisable() {
-    const eventCode = eventVal.split("-")[1];
-    switch (eventCode) {
-      case "fsshlib1f":
-        return !noteVal || !noteVal2;
-      case "fsshlib1f2":
-        return !noteVal2;
-      case "fsshlib3fk":
-        return !noteVal || !noteVal2;
-      default:
-        return false;
-    }
-  }
-
   return (
     <>
       <Container className="info-container">
         <h2>刷入 QR Code</h2>
         <Form.Row>
           <Col md>
-            <Form.Group>
-              <Form.Label htmlFor="form-scan-event">
-                <FontAwesomeIcon icon="calendar-day" /> 活動
-              </Form.Label>
-              <Form.Control
-                as="select"
-                id="form-scan-event"
-                value={eventVal}
-                onChange={(e) => {
-                  setEventVal(e.target.value);
-                  setGateVal(0);
-                  getGates(e.target.value);
-                }}
-              >
-                <option value="0" disabled>
-                  請選擇活動
-                </option>
-                {eventList.map((item) => (
-                  <option value={`${item.id}-${item.code}`} key={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-          </Col>
-          <Col md>
-            <Form.Group>
-              <Form.Label htmlFor="form-scan-event">
-                <FontAwesomeIcon icon="door-open" /> 入口
-              </Form.Label>
-              <Form.Control
-                as="select"
-                id="form-scan-event"
-                value={gateVal}
-                onChange={(e) => {
-                  setGateVal(e.target.value);
-                }}
-                disabled={eventVal === 0}
-              >
-                <option value="0" disabled>
-                  請選擇入口
-                </option>
-                {gateList.map((item) => (
-                  <option value={item.id} key={item.id}>
-                    {item.value}
-                  </option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-          </Col>
-          <Col md>
-            <Form.Group>
-              <Form.Label htmlFor="form-scan-event">
-                <FontAwesomeIcon icon="video" /> 鏡頭
-              </Form.Label>
+            <InputGroup>
+              <InputGroup.Text>
+                <Form.Label
+                  htmlFor="form-checkin-note"
+                  className="my-0"
+                  style={{ color: "#212529" }}
+                >
+                  <FontAwesomeIcon icon="video" /> 鏡頭
+                </Form.Label>
+              </InputGroup.Text>
               <Form.Control
                 as="select"
                 id="form-scan-event"
@@ -369,41 +268,34 @@ export default function ScanPage() {
                   </option>
                 ))}
               </Form.Control>
-            </Form.Group>
-          </Col>
-          <Col md={2} lg={1}>
-            <Form.Group>
-              <Form.Label htmlFor="form-scan-event" />
-              <Button
-                className="btn-rnrs"
-                block
-                onClick={() => onStartOrReset()}
-                disabled={gateVal === 0}
-              >
-                {isScanning ? "重設" : "開始"}
-              </Button>
-            </Form.Group>
-          </Col>
-        </Form.Row>
-        <Form.Row>
-          <Col md className="mb-2">
-            <Card style={{ backgroundColor: "#E9ECEF" }}>
-              <Card.Body>
-                <Card.Title>
-                  <FontAwesomeIcon icon="camera" /> Scanner
-                </Card.Title>
-                <video
-                  id="scanner"
-                  style={{
-                    transform: isMirror ? "rotateY(180deg)" : "rotateY(0deg)",
-                  }}
-                  width="100%"
-                  muted
-                />
+              <InputGroup.Append>
+                <Button
+                  className="my-0 px-4 btn-rnrs"
+                  block
+                  onClick={() => onStartOrReset()}
+                >
+                  {isScanning ? "重設" : "開始"}
+                </Button>
+              </InputGroup.Append>
+            </InputGroup>
+            <Card className="my-2" style={{ backgroundColor: "#E9ECEF" }}>
+              <Card.Body className="p-3">
+                {!isScanning ? (
+                  <Card.Title className="m-0">
+                    <FontAwesomeIcon icon="camera" /> Scanner
+                  </Card.Title>
+                ) : (
+                  <video
+                    id="scanner"
+                    style={{
+                      transform: isMirror ? "rotateY(180deg)" : "rotateY(0deg)",
+                    }}
+                    width="100%"
+                    muted
+                  />
+                )}
               </Card.Body>
             </Card>
-          </Col>
-          <Col md>
             <InputGroup className="mb-2">
               <InputGroup.Text>
                 <Form.Label
@@ -417,9 +309,12 @@ export default function ScanPage() {
               <Form.Control
                 type="text"
                 id="form-checkin-note"
-                placeholder="請輸入學號或指定識別資料"
+                placeholder={`請輸入${
+                  scanMode !== "STORE_QUERY"
+                    ? "零件序號（P.xxxxx）"
+                    : "倉儲編號（S.x-x-x）"
+                }`}
                 value={input}
-                disabled={!isScanning}
                 onChange={(e) => {
                   setInput(e.target.value);
                   setCanNote(e.target.value !== "");
@@ -429,27 +324,24 @@ export default function ScanPage() {
                 <Button
                   type="submit"
                   className="my-0 px-4 btn-rnrs"
-                  disabled={
-                    input === "" ||
-                    !isScanning ||
-                    noteVal !== "" ||
-                    noteVal2 !== ""
-                  }
+                  disabled={input === ""}
                   onClick={() => {
-                    onScanSuccess(input, true);
+                    onDataSubmit(`PLMS.${input}`);
                     setInput("");
-                    setCanNote(true);
                   }}
                 >
                   送出
                 </Button>
               </InputGroup.Append>
             </InputGroup>
-            <Card style={{ backgroundColor: "#E9ECEF" }}>
-              <Card.Body>
-                <Card.Title>
-                  <FontAwesomeIcon icon="address-card" /> 來賓資訊
-                </Card.Title>
+          </Col>
+          <Col md>
+            <Tabs
+              activeKey={scanMode}
+              onSelect={(v) => setScanMode(v)}
+              className="mb-2"
+            >
+              <Tab eventKey="PARTS_IN" title="零件入庫">
                 <Form.Row>
                   <Col md>
                     <Form.Group>
@@ -481,78 +373,6 @@ export default function ScanPage() {
                   </Col>
                 </Form.Row>
                 <Form.Row>
-                  <Col md>
-                    <Form.Group>
-                      <Form.Label htmlFor="form-register-location">
-                        <FontAwesomeIcon icon="user-tie" /> 身分
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        id="form-register-location"
-                        placeholder="系統自動填入"
-                        disabled
-                        value={infoRole}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md>
-                    <Form.Group>
-                      <Form.Label htmlFor="form-register-location">
-                        <FontAwesomeIcon icon="clock" /> 填報時間
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        id="form-register-location"
-                        placeholder="系統自動填入"
-                        disabled
-                        value={infoTime}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Form.Row>
-                <InputGroup className="mb-2">
-                  <InputGroup.Text>
-                    <Form.Label
-                      htmlFor="form-checkin-note"
-                      className="my-0"
-                      style={{ color: "#212529" }}
-                    >
-                      <FontAwesomeIcon icon="book" /> 備註 1 (體溫)
-                    </Form.Label>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    id="form-checkin-note"
-                    placeholder="請依規定輸入"
-                    value={noteVal}
-                    onChange={(e) => {
-                      setNoteVal(e.target.value);
-                    }}
-                    disabled={!canNote}
-                  />
-                </InputGroup>
-                <InputGroup className="mb-2">
-                  <InputGroup.Text>
-                    <Form.Label
-                      htmlFor="form-checkin-note"
-                      className="my-0"
-                      style={{ color: "#212529" }}
-                    >
-                      <FontAwesomeIcon icon="book" /> 備註 2 (座位編號)
-                    </Form.Label>
-                  </InputGroup.Text>
-                  <Form.Control
-                    type="text"
-                    id="form-checkin-note"
-                    placeholder="請依規定輸入"
-                    value={noteVal2}
-                    onChange={(e) => {
-                      setNoteVal2(e.target.value);
-                    }}
-                    disabled={!canNote}
-                  />
-                </InputGroup>
-                <Form.Row>
                   <Col md className="mb-2">
                     <Button
                       block
@@ -567,28 +387,24 @@ export default function ScanPage() {
                     <Button
                       type="submit"
                       className="my-0 btn-rnrs"
-                      disabled={
-                        !canNote ||
-                        (noteVal === "" && noteVal2 === "") ||
-                        isNoteSubmitDisable()
-                      }
-                      onClick={() => {
-                        if (input === "" && !!lastCheckinId) {
-                          onSubmitNote();
-                        } else {
-                          onScanSuccess(input, true).then(() => {
-                            onSubmitNote(false);
-                          });
-                          setInput("");
-                        }
-                      }}
+                      disabled={false}
+                      onClick={() => {}}
                     >
                       {!lastCheckinId ? "送出並備註" : "送出備註"}
                     </Button>
                   </Col>
                 </Form.Row>
-              </Card.Body>
-            </Card>
+              </Tab>
+              <Tab eventKey="PARTS_OUT" title="零件出庫">
+                零件出庫
+              </Tab>
+              <Tab eventKey="PARTS_QUERY" title="零件查詢">
+                零件查詢
+              </Tab>
+              <Tab eventKey="STORE_QUERY" title="倉儲查詢">
+                倉儲查詢
+              </Tab>
+            </Tabs>
           </Col>
         </Form.Row>
       </Container>

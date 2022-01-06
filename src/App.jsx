@@ -10,7 +10,6 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import routesConfig from "./config/routes";
 import renderRoutes from "./units/renderRoutes";
-// import './css/style.css';
 import "./css/App.css";
 import "./css/Main.css";
 import "./css/btn-rnrs.css";

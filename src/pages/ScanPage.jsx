@@ -15,11 +15,25 @@ import Swal from "sweetalert2";
 import useConstructor from "../units/useConstructor";
 import API from "../API";
 import "../css/ScanPage.css";
+import PartsCard from "../components/PartsCard";
 
 let codeReader;
 let lastResult;
 let timeout;
 let lastCheckinId;
+
+const examplePartsInfo = {
+  id: 12345,
+  category: "動力",
+  common_name: "14U4 變速箱",
+  spec: "變速比 10.71:1",
+  quantity: 2,
+  unit: "組",
+  supplier_name: "Andymark",
+  product_name: "AM14U4 - FIRST Kit of Parts Chassis",
+  product_code: "am-14U4",
+  note: "六輪底盤",
+};
 
 /*
 const scanModeList = [
@@ -61,7 +75,7 @@ export default function ScanPage() {
   const [deviceIndex, setDeviceIndex] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
 
-  const [scanMode, setScanMode] = useState("PARTS_QUERY");
+  const [scanMode, setScanMode] = useState("PARTS_IN");
 
   /* eslint-disable no-unused-vars */
   const [infoOrg, setInfoOrg] = useState("");
@@ -279,7 +293,7 @@ export default function ScanPage() {
               </InputGroup.Append>
             </InputGroup>
             <Card className="my-2" style={{ backgroundColor: "#E9ECEF" }}>
-              <Card.Body className="p-3">
+              <Card.Body className="p-3 scanner">
                 {!isScanning ? (
                   <Card.Title className="m-0">
                     <FontAwesomeIcon icon="camera" /> Scanner
@@ -342,6 +356,16 @@ export default function ScanPage() {
               className="mb-2"
             >
               <Tab eventKey="PARTS_IN" title="零件入庫">
+                <PartsCard partsInfo={examplePartsInfo} detail />
+              </Tab>
+              <Tab eventKey="PARTS_OUT" title="零件出庫">
+                零件出庫
+              </Tab>
+              <Tab eventKey="PARTS_QUERY" title="零件查詢">
+                零件查詢
+              </Tab>
+              <Tab eventKey="STORE_QUERY" title="倉儲查詢">
+                倉儲查詢
                 <Form.Row>
                   <Col md>
                     <Form.Group>
@@ -394,15 +418,6 @@ export default function ScanPage() {
                     </Button>
                   </Col>
                 </Form.Row>
-              </Tab>
-              <Tab eventKey="PARTS_OUT" title="零件出庫">
-                零件出庫
-              </Tab>
-              <Tab eventKey="PARTS_QUERY" title="零件查詢">
-                零件查詢
-              </Tab>
-              <Tab eventKey="STORE_QUERY" title="倉儲查詢">
-                倉儲查詢
               </Tab>
             </Tabs>
           </Col>

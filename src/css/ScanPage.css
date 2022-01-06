@@ -6,6 +6,10 @@
   padding: 0.5rem !important;
 }
 
-.card-title {
+.scanner .card-title {
   text-align: center;
+}
+
+.table-sm {
+  line-height: 1rem;
 }

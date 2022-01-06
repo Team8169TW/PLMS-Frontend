@@ -19,6 +19,8 @@ import PartsCard from "../components/PartsCard";
 import StoreCard from "../components/StoreCard";
 import SpaceHalfREM from "../components/SpaceHalfREM";
 import HistoryPartsCard from "../components/HistoryPartsCard";
+import StoreBoxCard from "../components/StoreBoxCard";
+import StoreGridCard from "../components/StoreGridCard";
 
 let codeReader;
 let lastResult;
@@ -70,6 +72,107 @@ const exampleHistories = [
     operator_name: "陳思惟",
     note: "測試用...",
     date: new Date().toLocaleDateString(),
+  },
+];
+
+const exampleStoreBox = [
+  {
+    number: 12,
+    parts: [
+      {
+        id: 12345,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+      {
+        id: 12345,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+      {
+        id: 12345,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+    ],
+  },
+  {
+    number: 13,
+    parts: [
+      {
+        id: 12345,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+    ],
+  },
+  {
+    number: 14,
+    parts: [
+      {
+        id: 12345,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+      {
+        id: 12345,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+    ],
+  },
+];
+
+const exampleStoreGrid = [
+  {
+    number: 2,
+    name: "變速箱",
+    boxes: [
+      {
+        number: 1,
+        contents: "14U4 變速箱、CIM 變速箱、紅馬達變速箱",
+      },
+      {
+        number: 2,
+        contents:
+          "14U4 變速箱、CIM 變速箱、紅馬達變速箱、NEO 變速箱、其他變速箱",
+      },
+      {
+        number: 3,
+        contents: "PG 馬達變速箱",
+      },
+    ],
+  },
+  {
+    number: 3,
+    name: "變速箱",
+    boxes: [
+      {
+        number: 1,
+        contents: "14U4 變速箱、CIM 變速箱、紅馬達變速箱",
+      },
+      {
+        number: 2,
+        contents:
+          "14U4 變速箱、CIM 變速箱、紅馬達變速箱、NEO 變速箱、其他變速箱",
+      },
+      {
+        number: 3,
+        contents: "PG 馬達變速箱",
+      },
+    ],
   },
 ];
 
@@ -425,11 +528,7 @@ export default function ScanPage() {
             </InputGroup>
           </Col>
           <Col md>
-            <Tabs
-              activeKey={scanMode}
-              onSelect={(v) => setScanMode(v)}
-              className="mb-2"
-            >
+            <Tabs activeKey={scanMode} onSelect={(v) => setScanMode(v)}>
               <Tab eventKey="PARTS_IN" title="零件入庫">
                 <PartsCard partsInfo={examplePartsInfo} />
                 <SpaceHalfREM />
@@ -454,6 +553,9 @@ export default function ScanPage() {
               <Tab eventKey="STORE_QUERY" title="倉儲查詢">
                 <StoreCard storeInfo={exampleStoreInfo} />
                 <SpaceHalfREM />
+                <StoreGridCard storeGrids={exampleStoreGrid} />
+                <SpaceHalfREM />
+                <StoreBoxCard storeBoxes={exampleStoreBox} />
               </Tab>
             </Tabs>
           </Col>

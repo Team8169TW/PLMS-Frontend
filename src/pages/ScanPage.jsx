@@ -16,6 +16,9 @@ import useConstructor from "../units/useConstructor";
 import API from "../API";
 import "../css/ScanPage.css";
 import PartsCard from "../components/PartsCard";
+import StoreCard from "../components/StoreCard";
+import SpaceHalfREM from "../components/SpaceHalfREM";
+import HistoryPartsCard from "../components/HistoryPartsCard";
 
 let codeReader;
 let lastResult;
@@ -34,6 +37,41 @@ const examplePartsInfo = {
   product_code: "am-14U4",
   note: "六輪底盤",
 };
+
+const exampleStoreInfo = {
+  area_code: "H",
+  area_name: "3F 動力櫃",
+  grid_number: 3,
+  grid_name: "變速箱 ",
+  box_number: 12,
+};
+
+const exampleHistories = [
+  {
+    id: 125,
+    type: "出庫",
+    quantity: 2,
+    operator_name: "陳思惟",
+    note: "測試用...",
+    date: new Date().toLocaleDateString(),
+  },
+  {
+    id: 126,
+    type: "入庫",
+    quantity: 2,
+    operator_name: "陳思惟",
+    note: "測試用...",
+    date: new Date().toLocaleDateString(),
+  },
+  {
+    id: 127,
+    type: "出庫",
+    quantity: 2,
+    operator_name: "陳思惟",
+    note: "測試用...",
+    date: new Date().toLocaleDateString(),
+  },
+];
 
 /*
 const scanModeList = [
@@ -75,7 +113,9 @@ export default function ScanPage() {
   const [deviceIndex, setDeviceIndex] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
 
-  const [scanMode, setScanMode] = useState("PARTS_IN");
+  const [scanMode, setScanMode] = useState("STORE_QUERY");
+  const [input, setInput] = useState("");
+  const [batchNumber, setBatchNumber] = useState("");
 
   /* eslint-disable no-unused-vars */
   const [infoOrg, setInfoOrg] = useState("");
@@ -85,7 +125,6 @@ export default function ScanPage() {
   const [canNote, setCanNote] = useState(false);
   const [noteVal, setNoteVal] = useState("");
   const [noteVal2, setNoteVal2] = useState("");
-  const [input, setInput] = useState("");
 
   useConstructor(() => {
     codeReader = new ZXing.BrowserMultiFormatReader();
@@ -248,10 +287,46 @@ export default function ScanPage() {
     });
   }
 
+  function BatchInput() {
+    const modeName = scanMode === "PARTS_IN" ? "入庫" : "出庫";
+    return (
+      <InputGroup className="mb-2">
+        <InputGroup.Text>
+          <Form.Label
+            htmlFor="form-checkin-note"
+            className="my-0"
+            style={{ color: "#212529" }}
+          >
+            <FontAwesomeIcon icon="angle-double-right" /> 批次處理
+          </Form.Label>
+        </InputGroup.Text>
+        <Form.Control
+          type="number"
+          id="form-checkin-note"
+          placeholder={`若欲批次${modeName}，請輸入數量`}
+          value={batchNumber}
+          onChange={(e) => {
+            setBatchNumber(e.target.value);
+          }}
+        />
+        <InputGroup.Append>
+          <Button
+            type="submit"
+            className="my-0 px-4 btn-rnrs"
+            disabled={batchNumber === ""}
+            onClick={() => {}}
+          >
+            批次{modeName}
+          </Button>
+        </InputGroup.Append>
+      </InputGroup>
+    );
+  }
+
   return (
     <>
       <Container className="info-container">
-        <h2>刷入 QR Code</h2>
+        <h2>一般作業</h2>
         <Form.Row>
           <Col md>
             <InputGroup>
@@ -356,68 +431,29 @@ export default function ScanPage() {
               className="mb-2"
             >
               <Tab eventKey="PARTS_IN" title="零件入庫">
-                <PartsCard partsInfo={examplePartsInfo} detail />
+                <PartsCard partsInfo={examplePartsInfo} />
+                <SpaceHalfREM />
+                <StoreCard storeInfo={exampleStoreInfo} />
+                <SpaceHalfREM />
+                <BatchInput />
               </Tab>
               <Tab eventKey="PARTS_OUT" title="零件出庫">
-                零件出庫
+                <PartsCard partsInfo={examplePartsInfo} />
+                <SpaceHalfREM />
+                <StoreCard storeInfo={exampleStoreInfo} />
+                <SpaceHalfREM />
+                <BatchInput />
               </Tab>
               <Tab eventKey="PARTS_QUERY" title="零件查詢">
-                零件查詢
+                <PartsCard partsInfo={examplePartsInfo} />
+                <SpaceHalfREM />
+                <StoreCard storeInfo={exampleStoreInfo} />
+                <SpaceHalfREM />
+                <HistoryPartsCard histories={exampleHistories} />
               </Tab>
               <Tab eventKey="STORE_QUERY" title="倉儲查詢">
-                倉儲查詢
-                <Form.Row>
-                  <Col md>
-                    <Form.Group>
-                      <Form.Label htmlFor="form-register-location">
-                        <FontAwesomeIcon icon="school" /> 單位
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        id="form-register-location"
-                        placeholder="系統自動填入"
-                        disabled
-                        value={infoOrg}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md>
-                    <Form.Group>
-                      <Form.Label htmlFor="form-register-location">
-                        <FontAwesomeIcon icon="user" /> 姓名
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        id="form-register-location"
-                        placeholder="系統自動填入"
-                        disabled
-                        value={infoName}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Form.Row>
-                <Form.Row>
-                  <Col md className="mb-2">
-                    <Button
-                      block
-                      variant="danger"
-                      disabled={!lastCheckinId}
-                      onClick={() => onReject()}
-                    >
-                      駁回簽到
-                    </Button>
-                  </Col>
-                  <Col md>
-                    <Button
-                      type="submit"
-                      className="my-0 btn-rnrs"
-                      disabled={false}
-                      onClick={() => {}}
-                    >
-                      {!lastCheckinId ? "送出並備註" : "送出備註"}
-                    </Button>
-                  </Col>
-                </Form.Row>
+                <StoreCard storeInfo={exampleStoreInfo} />
+                <SpaceHalfREM />
               </Tab>
             </Tabs>
           </Col>

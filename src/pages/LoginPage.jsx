@@ -4,6 +4,7 @@ import ExpiredStorage from "expired-storage";
 import { useHistory } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import jwtDecode from "jwt-decode";
+import Swal from "sweetalert2";
 import { Toast } from "../units/Alert";
 import "../css/LoginPage.css";
 import API from "../API";
@@ -67,6 +68,13 @@ export default function LoginPage() {
                     });
                     setTimeout(() => {
                       history.push("/index");
+                      if (userInfo.role === "visitor") {
+                        Swal.fire({
+                          title: "功能受限",
+                          html: `您目前的身分為 <code>訪客</code><br>若為團隊成員，請聯絡管理員協助您啟用帳號。<br>目前帳號：${userInfo.email}`,
+                          icon: "warning",
+                        });
+                      }
                     }, 1500);
                     break;
                   }
@@ -86,12 +94,13 @@ export default function LoginPage() {
                   setMsg("請不要關閉 Google 登入彈出視窗！");
                   break;
                 case "idpiframe_initialization_failed":
+                  setEnable(false);
                   switch (e.details) {
                     case "Cookies are not enabled in current environment.":
                       setMsg("請在您的瀏覽器啟用 Cookie。");
-                      setEnable(false);
                       break;
                     default:
+                      setMsg("發生錯誤，請聯絡管理員！");
                       break;
                   }
                   break;

@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Form } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import paginationFactory, {
   PaginationListStandalone,
@@ -43,7 +43,7 @@ const options = {
       text: "100",
       value: 100,
     },
-  ], // A numeric array is also available. the purpose of above example is custom the text
+  ],
 };
 
 export default function SmartTable(props) {
@@ -53,11 +53,14 @@ export default function SmartTable(props) {
     <ToolkitProvider keyField="id" data={data} columns={columns} search>
       {(props2) => (
         <PaginationProvider
-          pagination={paginationFactory({ ...options, dataSize: data.length })}
+          pagination={paginationFactory({
+            ...options,
+            dataSize: data.length,
+          })}
         >
           {({ paginationProps, paginationTableProps }) => (
             <>
-              <Form.Row>
+              <Row>
                 <Col md={{ span: 4, offset: 8 }}>
                   <Form.Group>
                     <Form.Label htmlFor="form-register-name">
@@ -67,9 +70,9 @@ export default function SmartTable(props) {
                     <SearchBar {...props2.searchProps} />
                   </Form.Group>
                 </Col>
-              </Form.Row>
+              </Row>
               {/* eslint-disable react/prop-types, react/jsx-props-no-spreading */}
-              <Form.Row>
+              <Row>
                 <Col>
                   <BootstrapTable
                     search
@@ -84,8 +87,8 @@ export default function SmartTable(props) {
                     {...paginationTableProps}
                   />
                 </Col>
-              </Form.Row>
-              <Form.Row className="react-bootstrap-table-footer">
+              </Row>
+              <Row className="react-bootstrap-table-footer">
                 <Col md={4}>
                   <PaginationTotalStandalone {...paginationProps} />
                 </Col>
@@ -97,7 +100,7 @@ export default function SmartTable(props) {
                 <Col md={4}>
                   <PaginationListStandalone {...paginationProps} />
                 </Col>
-              </Form.Row>
+              </Row>
               {/* eslint-enable react/prop-types, react/jsx-props-no-spreading */}
             </>
           )}
@@ -108,7 +111,6 @@ export default function SmartTable(props) {
 }
 
 SmartTable.propTypes = {
-  content: PropTypes.string.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   data: PropTypes.array.isRequired,
   // eslint-disable-next-line react/forbid-prop-types

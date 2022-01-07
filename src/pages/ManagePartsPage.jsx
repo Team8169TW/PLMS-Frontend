@@ -21,7 +21,7 @@ function formatterCreatedAt(content) {
 }
 
 function onClickBtnQRCode(row) {
-  const code = formatterID(row.part.id);
+  const code = `PLMS.${formatterID(row.part.id)}`;
   ReactSwal.fire({
     title: `${code}`,
     html: (

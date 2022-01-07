@@ -6,6 +6,7 @@ import {
   Container,
   Form,
   InputGroup,
+  Row,
   Tab,
   Tabs,
 } from "react-bootstrap";
@@ -236,7 +237,6 @@ export default function ScanPage() {
 
   const [scanMode, setScanMode] = useState("PARTS_QUERY");
   const [input, setInput] = useState("");
-  const [batchNumber, setBatchNumber] = useState("");
   const [partInfo, setPartInfo] = useState({ id: 0 });
   const [storeInfo, setStoreInfo] = useState({ area_code: "NULL" });
   const [histories, setHistories] = useState([]);
@@ -275,7 +275,7 @@ export default function ScanPage() {
   function clearLast() {
     lastResult = undefined;
     setInput("");
-    setBatchNumber("");
+    // setBatchNumber("");
     setPartInfo({ id: 0 });
     setStoreInfo({ area_code: "NULL" });
     setHistories([]);
@@ -329,6 +329,7 @@ export default function ScanPage() {
 
   async function onDataSubmit(content, mode = activeTab) {
     const [PLMS, prefix, code] = content.split(".");
+    console.log([PLMS, prefix, code, activeTab, mode]);
     if (PLMS !== "PLMS" || code === "") {
       formatError(content);
     } else if (
@@ -414,38 +415,40 @@ export default function ScanPage() {
   }
 
   function BatchInput() {
-    const modeName = scanMode === "PARTS_IN" ? "入庫" : "出庫";
+    const [batchNumber, setBatchNumber] = useState("");
     return (
-      <InputGroup className="mb-2">
-        <InputGroup.Text>
-          <Form.Label
-            htmlFor="form-checkin-note"
-            className="my-0"
-            style={{ color: "#212529" }}
-          >
-            <FontAwesomeIcon icon="angle-double-right" /> 批次處理
-          </Form.Label>
-        </InputGroup.Text>
-        <Form.Control
-          type="number"
-          id="form-checkin-note"
-          placeholder={`若欲批次${modeName}，請輸入數量`}
-          value={batchNumber}
-          onChange={(e) => {
-            setBatchNumber(e.target.value);
-          }}
-        />
-        <InputGroup.Append>
+      <Form>
+        <InputGroup className="mb-2">
+          <InputGroup.Text>
+            <Form.Label
+              htmlFor="form-checkin-note"
+              className="my-0"
+              style={{ color: "#212529" }}
+            >
+              <FontAwesomeIcon icon="angle-double-right" /> 批次處理
+            </Form.Label>
+          </InputGroup.Text>
+          <Form.Control
+            type="number"
+            id="form-checkin-note"
+            placeholder={`若欲批次${
+              scanMode === "PARTS_IN" ? "入庫" : "出庫"
+            }，請輸入數量`}
+            value={batchNumber}
+            onChange={(e) => {
+              setBatchNumber(e.target.value);
+            }}
+          />
           <Button
             type="submit"
             className="my-0 px-4 btn-rnrs"
             disabled={batchNumber === ""}
             onClick={() => {}}
           >
-            批次{modeName}
+            批次{scanMode === "PARTS_IN" ? "入庫" : "出庫"}
           </Button>
-        </InputGroup.Append>
-      </InputGroup>
+        </InputGroup>
+      </Form>
     );
   }
 
@@ -453,7 +456,7 @@ export default function ScanPage() {
     <>
       <Container className="info-container">
         <h2>一般作業</h2>
-        <Form.Row>
+        <Row>
           <Col md>
             <InputGroup>
               <InputGroup.Text>
@@ -483,15 +486,13 @@ export default function ScanPage() {
                   </option>
                 ))}
               </Form.Control>
-              <InputGroup.Append>
-                <Button
-                  className="my-0 px-4 btn-rnrs"
-                  block
-                  onClick={() => onStartOrReset()}
-                >
-                  {isScanning ? "重設" : "開始"}
-                </Button>
-              </InputGroup.Append>
+              <Button
+                className="my-0 px-4 btn-rnrs"
+                block="true"
+                onClick={() => onStartOrReset()}
+              >
+                {isScanning ? "重設" : "開始"}
+              </Button>
             </InputGroup>
             <Card className="my-2" style={{ backgroundColor: "#E9ECEF" }}>
               <Card.Body className="p-3 scanner">
@@ -541,15 +542,14 @@ export default function ScanPage() {
                     setInput(e.target.value);
                   }}
                 />
-                <InputGroup.Append>
-                  <Button
-                    type="submit"
-                    className="my-0 px-4 btn-rnrs"
-                    disabled={input === ""}
-                  >
-                    送出
-                  </Button>
-                </InputGroup.Append>
+                <Button
+                  type="submit"
+                  className="my-0 px-4 btn-rnrs"
+                  block="true"
+                  disabled={input === ""}
+                >
+                  送出
+                </Button>
               </InputGroup>
             </Form>
           </Col>
@@ -587,7 +587,7 @@ export default function ScanPage() {
               </Tab>
             </Tabs>
           </Col>
-        </Form.Row>
+        </Row>
       </Container>
     </>
   );

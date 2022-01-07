@@ -30,7 +30,7 @@ const routes = {
     },
     {
       path: "/manageStores",
-      component: loadable(() => import("../pages/ManageCheckinPage")),
+      component: loadable(() => import("../pages/testPage")),
       protected: true,
     },
     {

@@ -34,10 +34,10 @@
   margin-bottom: 0.7rem;
 }
 
-.info-container .btn[type="submit"] {
+/* .info-container .btn[type="submit"] {
   width: 100%;
   margin: 0.7rem 0;
-}
+} */
 
 .info-container hr {
   border: 0.2rem dashed #fff;

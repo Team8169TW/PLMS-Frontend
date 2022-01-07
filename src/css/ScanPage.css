@@ -1,5 +1,9 @@
-.nav-tabs a {
+.nav-tabs .nav-link.active {
   color: #5cb3cc;
+}
+
+.nav-tabs button {
+  background-color: transparent;
 }
 
 .tab-content {

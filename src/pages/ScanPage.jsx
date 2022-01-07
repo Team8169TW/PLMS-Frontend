@@ -19,14 +19,13 @@ import PartsCard from "../components/PartsCard";
 import StoreCard from "../components/StoreCard";
 import SpaceHalfREM from "../components/SpaceHalfREM";
 import HistoryPartsCard from "../components/HistoryPartsCard";
-import StoreBoxCard from "../components/StoreBoxCard";
-import StoreGridCard from "../components/StoreGridCard";
+import StoreContentCard from "../components/StoreContentCard";
 
 let codeReader;
 let lastResult;
 let timeout;
-let lastCheckinId;
 
+// eslint-disable-next-line no-unused-vars
 const examplePartsInfo = {
   id: 12345,
   category: "動力",
@@ -40,6 +39,7 @@ const examplePartsInfo = {
   note: "六輪底盤",
 };
 
+// eslint-disable-next-line no-unused-vars
 const exampleStoreInfo = {
   area_code: "H",
   area_name: "3F 動力櫃",
@@ -48,6 +48,7 @@ const exampleStoreInfo = {
   box_number: 12,
 };
 
+// eslint-disable-next-line no-unused-vars
 const exampleHistories = [
   {
     id: 125,
@@ -75,6 +76,7 @@ const exampleHistories = [
   },
 ];
 
+// eslint-disable-next-line no-unused-vars
 const exampleStoreBox = [
   {
     number: 12,
@@ -87,14 +89,14 @@ const exampleStoreBox = [
         unit: "組",
       },
       {
-        id: 12345,
+        id: 12346,
         common_name: "14U4 變速箱",
         spec: "變速比 10.71:1",
         quantity: 2,
         unit: "組",
       },
       {
-        id: 12345,
+        id: 12347,
         common_name: "14U4 變速箱",
         spec: "變速比 10.71:1",
         quantity: 2,
@@ -106,7 +108,7 @@ const exampleStoreBox = [
     number: 13,
     parts: [
       {
-        id: 12345,
+        id: 12348,
         common_name: "14U4 變速箱",
         spec: "變速比 10.71:1",
         quantity: 2,
@@ -118,14 +120,14 @@ const exampleStoreBox = [
     number: 14,
     parts: [
       {
-        id: 12345,
+        id: 12349,
         common_name: "14U4 變速箱",
         spec: "變速比 10.71:1",
         quantity: 2,
         unit: "組",
       },
       {
-        id: 12345,
+        id: 12350,
         common_name: "14U4 變速箱",
         spec: "變速比 10.71:1",
         quantity: 2,
@@ -135,6 +137,7 @@ const exampleStoreBox = [
   },
 ];
 
+// eslint-disable-next-line no-unused-vars
 const exampleStoreGrid = [
   {
     number: 2,
@@ -210,24 +213,33 @@ const scan = {
   },
 };
 
+function formatError(content, correctFormat = "") {
+  Swal.fire({
+    title: "格式不符",
+    html: `資料：${content}${
+      correctFormat !== ""
+        ? `<br>請掃描零件 QR Code<br>正確格式：<code>${correctFormat}`
+        : ""
+    }</code>`,
+    showConfirmButton: false,
+    icon: "error",
+    timer: 1000,
+  });
+}
+
 export default function ScanPage() {
   const [devices, setDevices] = useState([]);
   const [isMirror, setIsMirror] = useState(false);
   const [deviceIndex, setDeviceIndex] = useState(0);
   const [isScanning, setIsScanning] = useState(false);
 
-  const [scanMode, setScanMode] = useState("STORE_QUERY");
+  const [scanMode, setScanMode] = useState("PARTS_QUERY");
   const [input, setInput] = useState("");
   const [batchNumber, setBatchNumber] = useState("");
-
-  /* eslint-disable no-unused-vars */
-  const [infoOrg, setInfoOrg] = useState("");
-  const [infoRole, setInfoRole] = useState("");
-  const [infoName, setInfoName] = useState("");
-  const [infoTime, setInfoTime] = useState("");
-  const [canNote, setCanNote] = useState(false);
-  const [noteVal, setNoteVal] = useState("");
-  const [noteVal2, setNoteVal2] = useState("");
+  const [partInfo, setPartInfo] = useState({ id: 0 });
+  const [storeInfo, setStoreInfo] = useState({ area_code: "NULL" });
+  const [histories, setHistories] = useState([]);
+  const [storeContents, setStoreContents] = useState([]);
 
   useConstructor(() => {
     codeReader = new ZXing.BrowserMultiFormatReader();
@@ -260,86 +272,93 @@ export default function ScanPage() {
   }, []);
 
   function clearLast() {
-    setInfoName("");
-    setInfoTime("");
-    setInfoOrg("");
-    setInfoRole("");
     lastResult = undefined;
-    lastCheckinId = undefined;
-    setCanNote(false);
-    setNoteVal("");
-    setNoteVal2("");
     setInput("");
+    setBatchNumber("");
+    setPartInfo({ id: 0 });
+    setStoreInfo({ area_code: "NULL" });
+    setHistories([]);
+    setStoreContents([]);
   }
 
-  async function onDataSubmit(content) {
-    console.log(content);
+  useEffect(() => clearLast, [scanMode]);
 
-    const payload = { content };
+  async function onResp(res, content) {
+    switch (res.status) {
+      case 200: {
+        // TODO
+        clearTimeout(timeout);
+        timeout = setTimeout(clearLast, 60000);
 
-    await API.post(`/checkin/`, payload)
-      .then((res) => {
-        switch (res.status) {
-          case 201: {
-            const {
-              id,
-              declare: {
-                name,
-                createdAt,
-                EventOrg: { value: org },
-                EventRole: { value: role },
-              },
-              history,
-            } = res.data;
+        const { part, store, history, storeContent } = res.data;
+        if (part) setPartInfo(part);
+        if (store) setStoreInfo(store);
+        if (history) setHistories(history);
+        if (storeContent) setStoreContents(storeContent);
 
-            lastCheckinId = id;
-            setCanNote(true);
+        Swal.fire({
+          title: "刷入成功",
+          html: `資料：${content}`,
+          showConfirmButton: false,
+          icon: "success",
+          timer: 1000,
+        });
+        break;
+      }
+      case 400:
+        formatError(content, "S.x-x-x");
+        break;
+      case 404: {
+        Swal.fire({
+          title: "資料不存在",
+          html: `資料：${content}`,
+          showConfirmButton: false,
+          icon: "error",
+          timer: 1000,
+        });
+        break;
+      }
+      default:
+        break;
+    }
+  }
 
-            clearTimeout(timeout);
-            timeout = setTimeout(clearLast, 180000);
+  async function onDataSubmit(content, mode = scanMode) {
+    const [PLMS, prefix, code] = content.split(".");
 
-            setInfoName(name);
-            setInfoTime(new Date(createdAt).toLocaleString());
-            setInfoOrg(org);
-            setInfoRole(role);
-
-            let historyHtml = "<br><br>刷入紀錄<br>";
-
-            for (let i = 0; i < history.length; i += 1) {
-              historyHtml += `${new Date(
-                history[i].createdAt
-              ).toLocaleString()} - ${history[i].id} - ${
-                history[i].EventGate.value
-              }<br>`;
-            }
-
-            Swal.fire({
-              title: "刷入成功",
-              html: `簽到ID：${id}<br>現在時間：${new Date().toLocaleString()}<br><strong>請依規定輸入資料至備註（若有需要）</strong>${
-                history.length ? historyHtml : ""
-              }`,
-              showConfirmButton: false,
-              icon: "success",
-              timer: 2500,
-            });
-            break;
-          }
-          case 400:
-          case 404: {
-            Swal.fire({
-              title: "格式不符或不存在",
-              html: `資料：${content}<br>現在時間：${new Date().toLocaleString()}`,
-              showConfirmButton: false,
-              icon: "error",
-              timer: 2000,
-            });
-            break;
-          }
-          default:
-            break;
-        }
-      })
-      .catch(() => {});
+    if (PLMS !== "PLMS" || code === "") {
+      formatError(content);
+    } else if (
+      (mode === "PARTS_IN" || mode === "PARTS_OUT") &&
+      prefix !== "P"
+    ) {
+      formatError(content, "P.xxxxx");
+    } else if (mode === "PARTS_QUERY" && prefix !== "P" && prefix !== "S") {
+      formatError(content, "P.xxxxx");
+    } else if (mode === "STORE_QUERY" && prefix !== "S" && prefix !== "P") {
+      formatError(content, "S.x-x-x");
+    } else if (mode === "PARTS_QUERY" && prefix === "S") {
+      setScanMode("STORE_QUERY");
+      onDataSubmit(content, "STORE_QUERY");
+    } else if (mode === "STORE_QUERY" && prefix === "P") {
+      setScanMode("PARTS_QUERY");
+      onDataSubmit(content, "PARTS_QUERY");
+    } else {
+      switch (mode) {
+        case "PARTS_IN":
+          break;
+        case "PARTS_OUT":
+          break;
+        case "PARTS_QUERY":
+          await API.get(`/part/${code}`).then((res) => onResp(res, content));
+          break;
+        case "STORE_QUERY":
+          await API.get(`/store/${code}`).then((res) => onResp(res, content));
+          break;
+        default:
+          break;
+      }
+    }
   }
 
   function onStartOrReset() {
@@ -354,6 +373,7 @@ export default function ScanPage() {
     }
   }
 
+  // eslint-disable-next-line no-unused-vars
   async function onReject() {
     Swal.fire({
       title: "確定駁回？",
@@ -365,7 +385,7 @@ export default function ScanPage() {
       cancelButtonText: "取消",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await API.delete(`/checkin/${lastCheckinId}`)
+        await API.delete(`/checkin/${lastResult}`)
           .then((res) => {
             switch (res.status) {
               case 204: {
@@ -488,74 +508,75 @@ export default function ScanPage() {
                 )}
               </Card.Body>
             </Card>
-            <InputGroup className="mb-2">
-              <InputGroup.Text>
-                <Form.Label
-                  htmlFor="form-checkin-note"
-                  className="my-0"
-                  style={{ color: "#212529" }}
-                >
-                  <FontAwesomeIcon icon="book" /> 手動輸入
-                </Form.Label>
-              </InputGroup.Text>
-              <Form.Control
-                type="text"
-                id="form-checkin-note"
-                placeholder={`請輸入${
-                  scanMode !== "STORE_QUERY"
-                    ? "零件序號（P.xxxxx）"
-                    : "倉儲編號（S.x-x-x）"
-                }`}
-                value={input}
-                onChange={(e) => {
-                  setInput(e.target.value);
-                  setCanNote(e.target.value !== "");
-                }}
-              />
-              <InputGroup.Append>
-                <Button
-                  type="submit"
-                  className="my-0 px-4 btn-rnrs"
-                  disabled={input === ""}
-                  onClick={() => {
-                    onDataSubmit(`PLMS.${input}`);
-                    setInput("");
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                onDataSubmit(`PLMS.${input}`);
+                setInput("");
+              }}
+            >
+              <InputGroup className="mb-2">
+                <InputGroup.Text>
+                  <Form.Label
+                    htmlFor="form-checkin-note"
+                    className="my-0"
+                    style={{ color: "#212529" }}
+                  >
+                    <FontAwesomeIcon icon="book" /> 手動輸入
+                  </Form.Label>
+                </InputGroup.Text>
+                <Form.Control
+                  type="text"
+                  id="form-checkin-note"
+                  placeholder={`請輸入${
+                    scanMode !== "STORE_QUERY"
+                      ? "零件序號（P.xxxxx）"
+                      : "倉儲編號（S.x-x-x）"
+                  }`}
+                  value={input}
+                  onChange={(e) => {
+                    setInput(e.target.value);
                   }}
-                >
-                  送出
-                </Button>
-              </InputGroup.Append>
-            </InputGroup>
+                />
+                <InputGroup.Append>
+                  <Button
+                    type="submit"
+                    className="my-0 px-4 btn-rnrs"
+                    disabled={input === ""}
+                  >
+                    送出
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+            </Form>
           </Col>
           <Col md>
             <Tabs activeKey={scanMode} onSelect={(v) => setScanMode(v)}>
               <Tab eventKey="PARTS_IN" title="零件入庫">
-                <PartsCard partsInfo={examplePartsInfo} />
+                <PartsCard partsInfo={partInfo} />
                 <SpaceHalfREM />
-                <StoreCard storeInfo={exampleStoreInfo} />
+                <StoreCard storeInfo={storeInfo} />
                 <SpaceHalfREM />
                 <BatchInput />
               </Tab>
               <Tab eventKey="PARTS_OUT" title="零件出庫">
-                <PartsCard partsInfo={examplePartsInfo} />
+                <PartsCard partsInfo={partInfo} />
                 <SpaceHalfREM />
-                <StoreCard storeInfo={exampleStoreInfo} />
+                <StoreCard storeInfo={storeInfo} />
                 <SpaceHalfREM />
                 <BatchInput />
               </Tab>
               <Tab eventKey="PARTS_QUERY" title="零件查詢">
-                <PartsCard partsInfo={examplePartsInfo} />
+                <PartsCard partsInfo={partInfo} />
                 <SpaceHalfREM />
-                <StoreCard storeInfo={exampleStoreInfo} />
+                <StoreCard storeInfo={storeInfo} />
                 <SpaceHalfREM />
-                <HistoryPartsCard histories={exampleHistories} />
+                <HistoryPartsCard histories={histories} />
               </Tab>
               <Tab eventKey="STORE_QUERY" title="倉儲查詢">
-                <StoreCard storeInfo={exampleStoreInfo} />
+                <StoreCard storeInfo={storeInfo} />
                 <SpaceHalfREM />
-                <StoreGridCard storeGrids={exampleStoreGrid} />
-                <SpaceHalfREM />
-                <StoreBoxCard storeBoxes={exampleStoreBox} />
+                <StoreContentCard storeContents={storeContents} />
               </Tab>
             </Tabs>
           </Col>

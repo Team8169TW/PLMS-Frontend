@@ -16,8 +16,8 @@ export default function StoreCard(props) {
               <tr>
                 <th style={{ whiteSpace: "nowrap" }}>編號</th>
                 <td>
-                  S.{storeInfo.area_code}-{storeInfo.grid_number}-
-                  {storeInfo.box_number}
+                  S.{storeInfo.area_code ?? 0}-{storeInfo.grid_number ?? 0}-
+                  {storeInfo.box_number ?? 0}
                 </td>
                 <th style={{ whiteSpace: "nowrap" }}>櫃號</th>
                 <td>
@@ -27,15 +27,15 @@ export default function StoreCard(props) {
               <tr>
                 <th>層號</th>
                 <td>
-                  {storeInfo.grid_number === 0
-                    ? "－未指定－"
-                    : `第 ${storeInfo.grid_number} 層 (${storeInfo.grid_name})`}
+                  {storeInfo.grid_number
+                    ? `第 ${storeInfo.grid_number} 層 (${storeInfo.grid_name})`
+                    : "－未指定－"}
                 </td>
                 <th>格號</th>
                 <td>
-                  {storeInfo.box_number === 0
-                    ? "－未指定－"
-                    : `第 ${storeInfo.box_number} 格`}
+                  {storeInfo.box_number
+                    ? `第 ${storeInfo.box_number} 格`
+                    : "－未指定－"}
                 </td>
               </tr>
             </tbody>

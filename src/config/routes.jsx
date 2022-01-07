@@ -25,7 +25,7 @@ const routes = {
     },
     {
       path: "/manageParts",
-      component: loadable(() => import("../pages/ManageDeclarePage")),
+      component: loadable(() => import("../pages/ManagePartsPage")),
       protected: true,
     },
     {

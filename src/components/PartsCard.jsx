@@ -15,7 +15,10 @@ export default function PartsCard(props) {
             <tbody>
               <tr>
                 <th style={{ whiteSpace: "nowrap" }}>序號</th>
-                <td>{partsInfo.id !== 0 && `P.${partsInfo.id}`}</td>
+                <td>
+                  {partsInfo.id !== 0 &&
+                    `P.${partsInfo.id.toString().padStart(5, "0")}`}
+                </td>
                 <th style={{ whiteSpace: "nowrap" }}>類別</th>
                 <td>{partsInfo.category}</td>
               </tr>

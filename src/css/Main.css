@@ -79,6 +79,10 @@
   display: inline-flex;
 }
 
+.react-bootstrap-table tbody button {
+  padding: 0.1rem 0.5rem;
+}
+
 .search-label {
   display: block;
 }

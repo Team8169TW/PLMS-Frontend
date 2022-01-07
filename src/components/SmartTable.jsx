@@ -1,6 +1,5 @@
 import React from "react";
 import { Col, Form } from "react-bootstrap";
-import "../css/Footer.css";
 import ToolkitProvider, { Search } from "react-bootstrap-table2-toolkit";
 import paginationFactory, {
   PaginationListStandalone,
@@ -48,13 +47,7 @@ const options = {
 };
 
 export default function SmartTable(props) {
-  const {
-    data,
-    columns,
-    eventList,
-    eventOnChangeCallback,
-    hasButton = false,
-  } = props;
+  const { data, columns, hasButton = false } = props;
 
   return (
     <ToolkitProvider keyField="id" data={data} columns={columns} search>
@@ -65,31 +58,7 @@ export default function SmartTable(props) {
           {({ paginationProps, paginationTableProps }) => (
             <>
               <Form.Row>
-                <Col md={4}>
-                  <Form.Group>
-                    <Form.Label htmlFor="form-scan-event">
-                      <FontAwesomeIcon icon="calendar-day" /> 活動
-                    </Form.Label>
-                    <Form.Control
-                      as="select"
-                      id="form-scan-event"
-                      defaultValue="0"
-                      onChange={(e) => {
-                        eventOnChangeCallback(e.target.value);
-                      }}
-                    >
-                      <option value="0" disabled>
-                        請選擇活動
-                      </option>
-                      {eventList.map((item) => (
-                        <option value={item.id} key={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-                <Col md={{ span: 4, offset: 4 }}>
+                <Col md={{ span: 4, offset: 8 }}>
                   <Form.Group>
                     <Form.Label htmlFor="form-register-name">
                       <FontAwesomeIcon icon="search" /> 搜尋
@@ -104,8 +73,8 @@ export default function SmartTable(props) {
                 <Col>
                   <BootstrapTable
                     search
-                    wrapperClasses="table-responsive"
-                    rowClasses={`text-nowrap ${hasButton && "has-button"}`}
+                    wrapperClasses="table-responsive text-nowrap"
+                    rowClasses={`${hasButton && "has-button"}`}
                     bootstrap4
                     striped
                     hover
@@ -144,8 +113,5 @@ SmartTable.propTypes = {
   data: PropTypes.array.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   columns: PropTypes.array.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  eventList: PropTypes.array.isRequired,
-  eventOnChangeCallback: PropTypes.func.isRequired,
   hasButton: PropTypes.bool.isRequired,
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Table } from "react-bootstrap";
 import PropTypes from "prop-types";
+import Padding from "./Padding";
 
 function formatterType(type) {
   switch (type) {
@@ -48,6 +49,7 @@ export default function HistoryPartsCard(props) {
             ))}
           </tbody>
         </Table>
+        {histories.length === 0 && <Padding msg="無資料" />}
       </Card.Body>
     </Card>
   );

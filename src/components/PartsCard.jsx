@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Table } from "react-bootstrap";
 import PropTypes from "prop-types";
+import Padding from "./Padding";
 
 export default function PartsCard(props) {
   const { partsInfo } = props;
@@ -9,7 +10,7 @@ export default function PartsCard(props) {
       <Card.Body className="p-3">
         <Card.Title>零件資訊</Card.Title>
         {partsInfo.id === 0 ? (
-          <p className="m-0 p-2 padding">等待輸入...</p>
+          <Padding msg="等待輸入..." />
         ) : (
           <Table striped hover size="sm" borderless className="mb-0">
             <tbody>

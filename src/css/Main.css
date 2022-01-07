@@ -86,3 +86,9 @@
 .search-label {
   display: block;
 }
+
+p.padding {
+  text-align: center;
+  background-color: #e9ecef;
+  font-weight: bolder;
+}

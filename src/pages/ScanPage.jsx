@@ -24,6 +24,7 @@ import StoreContentCard from "../components/StoreContentCard";
 let codeReader;
 let lastResult;
 let timeout;
+let activeTab;
 
 // eslint-disable-next-line no-unused-vars
 const examplePartsInfo = {
@@ -281,14 +282,17 @@ export default function ScanPage() {
     setStoreContents([]);
   }
 
-  useEffect(() => clearLast, [scanMode]);
+  useEffect(() => {
+    clearLast();
+    activeTab = scanMode;
+  }, [scanMode]);
 
   async function onResp(res, content) {
     switch (res.status) {
       case 200: {
         // TODO
         clearTimeout(timeout);
-        timeout = setTimeout(clearLast, 60000);
+        timeout = setTimeout(clearLast, 30000);
 
         const { part, store, history, storeContent } = res.data;
         if (part) setPartInfo(part);
@@ -323,9 +327,8 @@ export default function ScanPage() {
     }
   }
 
-  async function onDataSubmit(content, mode = scanMode) {
+  async function onDataSubmit(content, mode = activeTab) {
     const [PLMS, prefix, code] = content.split(".");
-
     if (PLMS !== "PLMS" || code === "") {
       formatError(content);
     } else if (
@@ -511,7 +514,7 @@ export default function ScanPage() {
             <Form
               onSubmit={(e) => {
                 e.preventDefault();
-                onDataSubmit(`PLMS.${input}`);
+                onDataSubmit(`PLMS.${input.toUpperCase()}`);
                 setInput("");
               }}
             >
@@ -551,7 +554,11 @@ export default function ScanPage() {
             </Form>
           </Col>
           <Col md>
-            <Tabs activeKey={scanMode} onSelect={(v) => setScanMode(v)}>
+            <Tabs
+              activeKey={scanMode}
+              onSelect={(v) => setScanMode(v)}
+              transition={false}
+            >
               <Tab eventKey="PARTS_IN" title="零件入庫">
                 <PartsCard partsInfo={partInfo} />
                 <SpaceHalfREM />

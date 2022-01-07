@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Table } from "react-bootstrap";
 import PropTypes from "prop-types";
+import Padding from "./Padding";
 
 export default function StoreCard(props) {
   const { storeInfo } = props;
@@ -9,7 +10,7 @@ export default function StoreCard(props) {
       <Card.Body className="p-3">
         <Card.Title>倉儲資訊</Card.Title>
         {storeInfo.area_code === "NULL" ? (
-          <p className="m-0 p-2 padding">等待輸入...</p>
+          <Padding msg="等待輸入..." />
         ) : (
           <Table striped hover size="sm" borderless className="mb-0">
             <tbody>

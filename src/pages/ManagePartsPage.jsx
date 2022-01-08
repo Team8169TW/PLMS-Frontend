@@ -20,6 +20,10 @@ function formatterCreatedAt(content) {
   return new Date(content).toLocaleDateString();
 }
 
+function formatterStore(content, row) {
+  return `${row.store.area_code}-${row.store.box_number}-${row.store.grid_number}`;
+}
+
 function onClickBtnQRCode(row) {
   const code = `PLMS.${formatterID(row.part.id)}`;
   ReactSwal.fire({
@@ -58,6 +62,11 @@ const columns = [
     dataField: "part.quantity",
     text: "數量",
     formatter: formatterQuantity,
+  },
+  {
+    dataField: "store",
+    text: "倉儲",
+    formatter: formatterStore,
   },
   {
     dataField: "part.product_name",

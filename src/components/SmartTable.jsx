@@ -50,7 +50,12 @@ export default function SmartTable(props) {
   const { data, columns, hasButton = false } = props;
 
   return (
-    <ToolkitProvider keyField="id" data={data} columns={columns} search>
+    <ToolkitProvider
+      keyField="id"
+      data={data}
+      columns={columns}
+      search={{ searchFormatted: true }}
+    >
       {(props2) => (
         <PaginationProvider
           pagination={paginationFactory({

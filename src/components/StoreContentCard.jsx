@@ -89,3 +89,104 @@ StoreContentCard.propTypes = {
     ).isRequired,
   ]).isRequired,
 };
+
+/* [
+  {
+    number: 12,
+    parts: [
+      {
+        id: 12345,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+      {
+        id: 12346,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+      {
+        id: 12347,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+    ],
+  },
+  {
+    number: 13,
+    parts: [
+      {
+        id: 12348,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+    ],
+  },
+  {
+    number: 14,
+    parts: [
+      {
+        id: 12349,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+      {
+        id: 12350,
+        common_name: "14U4 變速箱",
+        spec: "變速比 10.71:1",
+        quantity: 2,
+        unit: "組",
+      },
+    ],
+  },
+] */
+
+/* [
+  {
+    number: 2,
+    name: "變速箱",
+    boxes: [
+      {
+        number: 1,
+        contents: "14U4 變速箱、CIM 變速箱、紅馬達變速箱",
+      },
+      {
+        number: 2,
+        contents:
+          "14U4 變速箱、CIM 變速箱、紅馬達變速箱、NEO 變速箱、其他變速箱",
+      },
+      {
+        number: 3,
+        contents: "PG 馬達變速箱",
+      },
+    ],
+  },
+  {
+    number: 3,
+    name: "變速箱",
+    boxes: [
+      {
+        number: 1,
+        contents: "14U4 變速箱、CIM 變速箱、紅馬達變速箱",
+      },
+      {
+        number: 2,
+        contents:
+          "14U4 變速箱、CIM 變速箱、紅馬達變速箱、NEO 變速箱、其他變速箱",
+      },
+      {
+        number: 3,
+        contents: "PG 馬達變速箱",
+      },
+    ],
+  },
+] */

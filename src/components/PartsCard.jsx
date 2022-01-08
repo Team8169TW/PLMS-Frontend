@@ -69,3 +69,16 @@ PartsCard.propTypes = {
     note: PropTypes.string,
   }).isRequired,
 };
+
+/* {
+  id: 12345,
+  category: "動力",
+  common_name: "14U4 變速箱",
+  spec: "變速比 10.71:1",
+  quantity: 2,
+  unit: "組",
+  supplier_name: "Andymark",
+  product_name: "AM14U4 - FIRST Kit of Parts Chassis",
+  product_code: "am-14U4",
+  note: "六輪底盤",
+} */

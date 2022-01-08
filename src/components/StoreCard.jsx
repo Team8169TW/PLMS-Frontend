@@ -56,3 +56,11 @@ StoreCard.propTypes = {
     box_number: PropTypes.number,
   }).isRequired,
 };
+
+/* {
+  area_code: "H",
+  area_name: "3F 動力櫃",
+  grid_number: 3,
+  grid_name: "變速箱 ",
+  box_number: 12,
+} */

@@ -26,160 +26,7 @@ let codeReader;
 let lastResult;
 let timeout;
 let activeTab;
-
-// eslint-disable-next-line no-unused-vars
-const examplePartsInfo = {
-  id: 12345,
-  category: "動力",
-  common_name: "14U4 變速箱",
-  spec: "變速比 10.71:1",
-  quantity: 2,
-  unit: "組",
-  supplier_name: "Andymark",
-  product_name: "AM14U4 - FIRST Kit of Parts Chassis",
-  product_code: "am-14U4",
-  note: "六輪底盤",
-};
-
-// eslint-disable-next-line no-unused-vars
-const exampleStoreInfo = {
-  area_code: "H",
-  area_name: "3F 動力櫃",
-  grid_number: 3,
-  grid_name: "變速箱 ",
-  box_number: 12,
-};
-
-// eslint-disable-next-line no-unused-vars
-const exampleHistories = [
-  {
-    id: 125,
-    type: "出庫",
-    quantity: 2,
-    operator_name: "陳思惟",
-    note: "測試用...",
-    date: new Date().toLocaleDateString(),
-  },
-  {
-    id: 126,
-    type: "入庫",
-    quantity: 2,
-    operator_name: "陳思惟",
-    note: "測試用...",
-    date: new Date().toLocaleDateString(),
-  },
-  {
-    id: 127,
-    type: "出庫",
-    quantity: 2,
-    operator_name: "陳思惟",
-    note: "測試用...",
-    date: new Date().toLocaleDateString(),
-  },
-];
-
-// eslint-disable-next-line no-unused-vars
-const exampleStoreBox = [
-  {
-    number: 12,
-    parts: [
-      {
-        id: 12345,
-        common_name: "14U4 變速箱",
-        spec: "變速比 10.71:1",
-        quantity: 2,
-        unit: "組",
-      },
-      {
-        id: 12346,
-        common_name: "14U4 變速箱",
-        spec: "變速比 10.71:1",
-        quantity: 2,
-        unit: "組",
-      },
-      {
-        id: 12347,
-        common_name: "14U4 變速箱",
-        spec: "變速比 10.71:1",
-        quantity: 2,
-        unit: "組",
-      },
-    ],
-  },
-  {
-    number: 13,
-    parts: [
-      {
-        id: 12348,
-        common_name: "14U4 變速箱",
-        spec: "變速比 10.71:1",
-        quantity: 2,
-        unit: "組",
-      },
-    ],
-  },
-  {
-    number: 14,
-    parts: [
-      {
-        id: 12349,
-        common_name: "14U4 變速箱",
-        spec: "變速比 10.71:1",
-        quantity: 2,
-        unit: "組",
-      },
-      {
-        id: 12350,
-        common_name: "14U4 變速箱",
-        spec: "變速比 10.71:1",
-        quantity: 2,
-        unit: "組",
-      },
-    ],
-  },
-];
-
-// eslint-disable-next-line no-unused-vars
-const exampleStoreGrid = [
-  {
-    number: 2,
-    name: "變速箱",
-    boxes: [
-      {
-        number: 1,
-        contents: "14U4 變速箱、CIM 變速箱、紅馬達變速箱",
-      },
-      {
-        number: 2,
-        contents:
-          "14U4 變速箱、CIM 變速箱、紅馬達變速箱、NEO 變速箱、其他變速箱",
-      },
-      {
-        number: 3,
-        contents: "PG 馬達變速箱",
-      },
-    ],
-  },
-  {
-    number: 3,
-    name: "變速箱",
-    boxes: [
-      {
-        number: 1,
-        contents: "14U4 變速箱、CIM 變速箱、紅馬達變速箱",
-      },
-      {
-        number: 2,
-        contents:
-          "14U4 變速箱、CIM 變速箱、紅馬達變速箱、NEO 變速箱、其他變速箱",
-      },
-      {
-        number: 3,
-        contents: "PG 馬達變速箱",
-      },
-    ],
-  },
-];
+let lastContent;
 
 /*
 const scanModeList = [
@@ -201,8 +48,8 @@ const scan = {
     codeReader.decodeFromVideoDevice(deviceId, "scanner", (result, err) => {
       if (result && result.text !== lastResult) {
         const { text } = result;
+        lastResult = text;
         successCallback(text);
-        lastResult = result.text;
       }
       if (err && !(err instanceof ZXing.NotFoundException)) {
         throw err;
@@ -285,6 +132,10 @@ export default function ScanPage() {
   useEffect(() => {
     clearLast();
     activeTab = scanMode;
+    if (lastContent !== undefined) {
+      lastResult = lastContent;
+      lastContent = undefined;
+    }
   }, [scanMode]);
 
   async function onResp(res, content) {
@@ -328,8 +179,9 @@ export default function ScanPage() {
   }
 
   async function onDataSubmit(content, mode = activeTab) {
+    // console.log([lastResult, content, lastContent]);
     const [PLMS, prefix, code] = content.split(".");
-    console.log([PLMS, prefix, code, activeTab, mode]);
+    // console.log([PLMS, prefix, code, activeTab, mode]);
     if (PLMS !== "PLMS" || code === "") {
       formatError(content);
     } else if (
@@ -342,9 +194,11 @@ export default function ScanPage() {
     } else if (mode === "STORE_QUERY" && prefix !== "S" && prefix !== "P") {
       formatError(content, "S.x-x-x");
     } else if (mode === "PARTS_QUERY" && prefix === "S") {
+      lastContent = content;
       setScanMode("STORE_QUERY");
       onDataSubmit(content, "STORE_QUERY");
     } else if (mode === "STORE_QUERY" && prefix === "P") {
+      lastContent = content;
       setScanMode("PARTS_QUERY");
       onDataSubmit(content, "PARTS_QUERY");
     } else {

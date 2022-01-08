@@ -66,3 +66,30 @@ HistoryPartsCard.propTypes = {
     })
   ).isRequired,
 };
+
+/* [
+  {
+    id: 125,
+    type: "出庫",
+    quantity: 2,
+    operator_name: "陳思惟",
+    note: "測試用...",
+    date: new Date().toLocaleDateString(),
+  },
+  {
+    id: 126,
+    type: "入庫",
+    quantity: 2,
+    operator_name: "陳思惟",
+    note: "測試用...",
+    date: new Date().toLocaleDateString(),
+  },
+  {
+    id: 127,
+    type: "出庫",
+    quantity: 2,
+    operator_name: "陳思惟",
+    note: "測試用...",
+    date: new Date().toLocaleDateString(),
+  },
+] */

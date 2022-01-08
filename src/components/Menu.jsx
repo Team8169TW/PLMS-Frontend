@@ -14,7 +14,7 @@ export default function Menu() {
   return (
     <>
       <Nav className="mr-auto">
-        <Nav.Item>
+        {/* <Nav.Item>
           <NavLink
             to="/announcement"
             activeClassName="active"
@@ -22,7 +22,7 @@ export default function Menu() {
           >
             <span className="nav-link-span">系統公告</span>
           </NavLink>
-        </Nav.Item>
+        </Nav.Item> */}
         {!!user && user.role !== "visitor" && (
           <Nav.Item>
             <NavLink to="/scan" activeClassName="active" className="nav-link">

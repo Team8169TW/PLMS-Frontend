@@ -30,12 +30,12 @@ const routes = {
     },
     {
       path: "/manageStores",
-      component: loadable(() => import("../pages/testPage")),
+      component: loadable(() => import("../pages/ManageStorePage")),
       protected: true,
     },
     {
       path: "/manageHistory",
-      component: loadable(() => import("../pages/testPage")),
+      component: loadable(() => import("../pages/ManageHistoryPage")),
       protected: true,
     },
     {

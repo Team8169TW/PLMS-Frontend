@@ -44,7 +44,7 @@
   background: #5cb3cc;
 }
 
-.info-container h2 {
+.info-container h2:not(.accordion-header) {
   border-bottom: 0.6rem solid #5cb3cc;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;

@@ -2,17 +2,7 @@ import React from "react";
 import { Card, Table } from "react-bootstrap";
 import PropTypes from "prop-types";
 import Padding from "./Padding";
-
-function formatterType(type) {
-  switch (type) {
-    case "STORE_IN":
-      return "入庫";
-    case "STORE_OUT":
-      return "出庫";
-    default:
-      return "未知";
-  }
-}
+import formatterType from "../units/formatterType";
 
 export default function HistoryPartsCard(props) {
   const { histories } = props;
